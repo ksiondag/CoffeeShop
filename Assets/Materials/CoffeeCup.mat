@@ -79,3 +79,5 @@ Material:
     - _FillColor: {r: 0, g: 0, b: 1, a: 1}
     - _LocalMax: {r: 1, g: 1, b: 1, a: 1}
     - _LocalMin: {r: 0, g: 0, b: 0, a: 1}
+    - _WorldMax: {r: -3.7645187, g: 1.5940001, b: 1.7817605, a: 0}
+    - _WorldMin: {r: -4.3872204, g: 1.0939999, b: 1.1590588, a: 0}

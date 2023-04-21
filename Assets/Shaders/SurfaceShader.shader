@@ -2,9 +2,9 @@
     Properties {
         _MainTex ("Texture", 2D) = "white" {}
         _FillColor ("Fill Color", Color) = (0, 0, 1, 1)
-        _FillAmount ("Fill Amount", Range(0, 1)) = 0.5
-        _LocalMin ("Local Min", Vector) = (0, 0, 0, 1)
-        _LocalMax ("Local Max", Vector) = (1, 1, 1, 1)
+        _FillAmount ("Fill Amount", Range(0, 1)) = 0.0
+        _WorldMin ("World Min", Vector) = (0, 0, 0, 1)
+        _WorldMax ("World Max", Vector) = (1, 1, 1, 1)
     }
 
     SubShader {
@@ -20,14 +20,14 @@
                 sampler2D _MainTex;
                 float4 _FillColor;
                 float _FillAmount;
-                float2 _LocalBounds;
-                float4 _LocalMin;
-                float4 _LocalMax;
+                float2 _WorldBounds;
+                float4 _WorldMin;
+                float4 _WorldMax;
 
                 struct appdata {
                     float4 vertex : POSITION;
                     float2 uv : TEXCOORD0;
-                    float3 localPos : TEXCOORD1;
+                    float3 WorldPos : TEXCOORD1;
                 };
 
                 struct v2f {
@@ -61,9 +61,10 @@
 
                     // Fill the mesh from bottom to top by percentage of the mesh's height up to _FillAmount
                     float fillThreshold = lerp(
-                        mul(unity_ObjectToWorld, _LocalMin).xyz.y,
-                        mul(unity_ObjectToWorld, _LocalMax).xyz.y, 
-                        _FillAmount);
+                        _WorldMin.y,
+                        _WorldMax.y, 
+                        _FillAmount
+                    );
 
                     if (worldY <= fillThreshold) {
                         albedo = _FillColor.rgb;
