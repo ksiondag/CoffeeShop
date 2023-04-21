@@ -8,8 +8,8 @@ public class LatteArt : UdonSharpBehaviour
 {
     public Material fillMaterial;
 
-    [Range(0, 1)] public float fillAmount = 0.5f;
-    public float fillRate = 10.0f;
+    [Range(0, 1)] public float fillAmount = 0.0f;
+    public float fillRate = 0.001f;
     public float maxFill = 1.0f;
 
     private bool isColliding = false;
@@ -59,19 +59,33 @@ public class LatteArt : UdonSharpBehaviour
     {
         MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
         MeshFilter meshFilter = GetComponent<MeshFilter>();
-        Bounds localBounds = meshFilter.mesh.bounds;
 
-        Vector3 worldMin = transform.TransformPoint(localBounds.min);
-        Vector3 worldMax = transform.TransformPoint(localBounds.max);
+        if (meshFilter.mesh == null)
+        {
+            Debug.LogError("MeshFilter.sharedMesh is null");
+            return;
+        }
+
+        Vector3[] vertices = meshFilter.mesh.vertices;
+
+        Vector3 worldMin = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+        Vector3 worldMax = new Vector3(float.MinValue, float.MinValue, float.MinValue);
+
+        foreach (Vector3 vertex in vertices)
+        {
+            // Convert local coordinates to world coordinates
+            Vector3 worldVertex = transform.TransformPoint(vertex);
+
+            // Update the minimum and maximum coordinates
+            worldMin = Vector3.Min(worldMin, worldVertex);
+            worldMax = Vector3.Max(worldMax, worldVertex);
+        }
+
+        Debug.Log("World Min: " + worldMin);
+        Debug.Log("World Max: " + worldMax);
         
-        fillMaterial.SetFloat("_LocalMin.x", worldMin.x);
-        fillMaterial.SetFloat("_LocalMin.y", worldMin.y);
-        fillMaterial.SetFloat("_LocalMin.z", worldMin.z);
-        fillMaterial.SetFloat("_LocalMin.w", 1);
-        fillMaterial.SetFloat("_LocalMax.x", worldMax.x);
-        fillMaterial.SetFloat("_LocalMax.y", worldMax.y);
-        fillMaterial.SetFloat("_LocalMax.z", worldMax.z);
-        fillMaterial.SetFloat("_LocalMax.w", 1);
+        fillMaterial.SetVector("_WorldMin", worldMin);
+        fillMaterial.SetVector("_WorldMax", worldMax);
         fillMaterial.SetFloat("_FillAmount", fillAmount);
         meshRenderer.material = fillMaterial;
     }
