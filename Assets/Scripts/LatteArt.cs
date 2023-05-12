@@ -9,37 +9,8 @@ public class LatteArt : UdonSharpBehaviour
     public Material fillMaterial;
 
     [Range(0, 1)] public float fillAmount = 0.0f;
-    public float fillRate = 0.001f;
     public float maxFill = 1.0f;
-
-    private bool isColliding = false;
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        EspressoMachine espressoMachine = collision.gameObject.GetComponent<EspressoMachine>();
-        if (espressoMachine != null)
-        {
-            // Set isColliding to true when colliding with "OtherObject"
-            isColliding = true;
-        }
-    }
-
-    private void OnCollisionExit(Collision collision)
-    {
-        EspressoMachine espressoMachine = collision.gameObject.GetComponent<EspressoMachine>();
-        if (espressoMachine != null)
-        {
-            // Set isColliding to false when no longer colliding with "OtherObject"
-            isColliding = false;
-        }
-    }
-
-    private void IncreaseFill()
-    {
-        fillAmount += fillRate * Time.deltaTime;
-        fillAmount = Mathf.Clamp(fillAmount, 0.0f, maxFill);
-        Debug.Log("Current Fill Value: " + fillAmount);
-    }
+    public Color color = Color.blue;
 
     void Start()
     {
@@ -49,10 +20,26 @@ public class LatteArt : UdonSharpBehaviour
     void Update()
     {
         UpdateShaderParameters();
-        if (isColliding)
-        {
-            IncreaseFill();
-        }
+    }
+
+    public void FillByAmount(float addAmount, Color addColor)
+    {
+        // Calculate the new fill amount
+        float totalFillAmount = Mathf.Clamp(fillAmount + addAmount, 0.0f, maxFill);
+
+        // Calculate the weight of the new color in the mix
+        float addColorWeight = addAmount / totalFillAmount;
+
+        // Blend the current fill color with the new color
+        Color mixedColor = Color.Lerp(color, addColor, addColorWeight);
+
+        // Update the fill color and amount in the material
+        fillMaterial.SetColor("_FillColor", mixedColor);
+        fillMaterial.SetFloat("_FillAmount", totalFillAmount);
+
+        // Update the current fill color and amount for the next frame
+        color = mixedColor;
+        fillAmount = totalFillAmount;
     }
 
     private void UpdateShaderParameters()
