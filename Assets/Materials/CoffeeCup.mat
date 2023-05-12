@@ -60,7 +60,7 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _FillAmount: 1
+    - _FillAmount: 0.8795611
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -76,8 +76,8 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FillColor: {r: 0, g: 0, b: 1, a: 1}
+    - _FillColor: {r: 0.6470178, g: 0.6132393, b: 0.59297276, a: 145.60933}
     - _LocalMax: {r: 1, g: 1, b: 1, a: 1}
     - _LocalMin: {r: 0, g: 0, b: 0, a: 1}
-    - _WorldMax: {r: -3.7645187, g: 1.5940001, b: 1.7817605, a: 0}
-    - _WorldMin: {r: -4.3872204, g: 1.0939999, b: 1.1590588, a: 0}
+    - _WorldMax: {r: -4.8386173, g: 1.5000004, b: 2.066701, a: 0}
+    - _WorldMin: {r: -5.54325, g: 0.9999999, b: 1.3620682, a: 0}
