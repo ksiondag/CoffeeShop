@@ -1,44 +1,39 @@
-﻿Shader "Custom/CupShader" {
-    Properties{
-        _MainTex("Texture", 2D) = "white" {}
-        _CupColor("Cup Color", Color) = (1, 1, 1, 1)
-        _FillPlaneY("Fill Plane Y", Range(0, 1)) = 0.5
+﻿Shader "Custom/CupShader"
+{
+    Properties
+    {
+        _MainTex ("Texture", 2D) = "white" {}
+        _Color ("Color", Color) = (1,1,1,1)
+        _CutoffHeight ("Cutoff Height", Range(0, 2)) = 1.1
     }
-    /*
-    SubShader{
-        // This is the fill shader
-        Tags { "Queue" = "Transparent" "RenderType" = "Transparent" }
-        LOD 100
 
-        Pass {
-            ColorMask 0 // don't write any color data
-            ZWrite On   // write to the depth buffer
-
-            Stencil {
-                Ref 1
-                Comp always
-                Pass replace
-            }
-        }
-    }
-    */
-    SubShader{
-        // This is a standard shader
-        Tags { "Queue" = "Transparent" "RenderType" = "Transparent" }
-        LOD 100
+    SubShader
+    {
+        Tags { "RenderType"="Opaque" }
 
         CGPROGRAM
         #pragma surface surf Lambert
-        fixed4 _CupColor;
 
-        sampler2D _MainTex;
-        struct Input {
+        struct Input
+        {
             float2 uv_MainTex;
+            float3 worldPos;
         };
 
-        void surf(Input IN, inout SurfaceOutput o) {
-            o.Albedo = _CupColor.rgb;
-            o.Alpha = _CupColor.a;
+        sampler2D _MainTex;
+        fixed4 _Color;
+        float _CutoffHeight;
+
+        void surf (Input IN, inout SurfaceOutput o)
+        {
+            // If the world position is above the cutoff height, discard this fragment
+            if (IN.worldPos.y > _CutoffHeight) {
+                discard;
+            }
+
+            fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
+            o.Albedo = c.rgb;
+            o.Alpha = c.a;
         }
         ENDCG
     }

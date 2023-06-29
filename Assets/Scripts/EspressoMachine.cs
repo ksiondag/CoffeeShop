@@ -39,7 +39,7 @@ public class EspressoMachine : UdonSharpBehaviour
         if (latteArt != null)
         {
             latteArt.FillByAmount(fillRate * Time.deltaTime, espressoColor);
-            Debug.Log("Current Fill Value: " + latteArt.fillAmount);
+            // Debug.Log("Current Fill Value: " + latteArt.fillAmount);
         }
     }
 

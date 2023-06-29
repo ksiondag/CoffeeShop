@@ -12,6 +12,7 @@
         LOD 100
 
         Pass {
+            CULL Off
             HLSLPROGRAM
                 #pragma vertex vert
                 #pragma fragment frag
@@ -66,10 +67,11 @@
                         _FillAmount
                     );
 
-                    if (worldY <= fillThreshold) {
-                        albedo = _FillColor.rgb;
+                    if (worldY > fillThreshold) {
+                        discard;
                     }
 
+                    albedo = _FillColor.rgb;
                     return fixed4(albedo, 1.0);
                 }
             ENDHLSL
