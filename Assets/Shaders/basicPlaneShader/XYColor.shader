@@ -39,10 +39,10 @@
                 col.g = i.uv.x;
                 col.b = 0;
 
-                float dist = distance(_InteractionPoint.xyz, i.vertex.xyz);
-                float radius = 2.5;
+                float dist = distance(_InteractionPoint.xy, i.uv.xy);
+                float radius = 0.25;
                 if(dist < radius) {
-                    col.b = radius - dist;
+                    col.b = (radius - dist) * 10;
                 }
                 return col;
             }
