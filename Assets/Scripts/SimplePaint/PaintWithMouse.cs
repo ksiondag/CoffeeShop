@@ -8,20 +8,18 @@ public class PaintWithMouse : UdonSharpBehaviour {
     private Material material;
 
     public Material shaderMaterial;
-    public MeshRenderer targetRenderer;
 
-    private RenderTexture renderTexture;
+    private Dye dye;
 
     void Start() {
         material = GetComponent<Renderer>().material;
-        renderTexture = new RenderTexture(512, 512, 0, RenderTextureFormat.ARGB32);
-        targetRenderer.material.mainTexture = renderTexture;
+        dye = GetComponent<Dye>();
+        dye.Initialize(512, 512, RenderTextureFormat.ARGB32);
     }
 
     private void UpdateFromCollision(Collision collision) {
         Vector3 point = collision.GetContact(0).point;
         Vector3 localPoint = this.gameObject.transform.InverseTransformPoint(point);
-        Debug.Log("Local point: " + localPoint);
 
         // Convert local coordinates to UV coordinates
         Vector2 uvPoint;
@@ -30,7 +28,7 @@ public class PaintWithMouse : UdonSharpBehaviour {
 
         material.SetVector("_InteractionPoint", new Vector4(uvPoint.x, uvPoint.y, 0, 0));
         shaderMaterial.SetVector("_InteractionPoint", new Vector4(uvPoint.x, uvPoint.y, 0, 0));
-        VRCGraphics.Blit(null, renderTexture, shaderMaterial);
+        dye.Blit(shaderMaterial);
     }
 
     private void OnCollisionEnter(Collision collision) {
