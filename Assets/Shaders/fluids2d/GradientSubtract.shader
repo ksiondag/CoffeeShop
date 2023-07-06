@@ -1,7 +1,7 @@
-﻿Shader "Custom/Pressure" {
+﻿Shader "Custom/GradientSubtract" {
     Properties {
         _PressureTex ("Pressure Texture", 2D) = "white" {}
-        _DivergenceTex ("Divergence Texture", 2D) = "white" {}
+        _VelocityTex ("Velocity Texture", 2D) = "white" {}
         _TexelSize ("Texel Size", Vector) = (512, 512, 0, 0)
     }
     SubShader {
@@ -27,7 +27,7 @@
             };
 
             sampler2D _PressureTex;
-            sampler2D _DivergenceTex;
+            sampler2D _VelocityTex;
             float4 _TexelSize;
 
             v2f vert (appdata v) {
@@ -46,9 +46,9 @@
                 float R = tex2D(_PressureTex, i.uvR).r;
                 float T = tex2D(_PressureTex, i.uvT).r;
                 float B = tex2D(_PressureTex, i.uvB).r;
-                float divergence = tex2D(_DivergenceTex, i.uv).r;
-                float pressure = (L + R + B + T - divergence) * 0.25;
-                return fixed4(pressure, 0.0, 0.0, 1.0);
+                float2 velocity = tex2D(_VelocityTex, i.uv).rg;
+                velocity -= float2(R - L, T - B);
+                return fixed4(velocity, 0.0, 1.0);
             }
             ENDCG
         }

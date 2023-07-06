@@ -22,6 +22,9 @@ public class Fluids2D : UdonSharpBehaviour {
     public Material vorticityMaterial;
     public Material divergenceMaterial;
     public Material clearMaterial;
+    public Material pressureMaterial;
+    public Material gradientSubtractMaterial;
+    public Material advectionMaterial;
 
     void Start() {
         dye = GetComponent<Dye>();
@@ -107,41 +110,39 @@ public class Fluids2D : UdonSharpBehaviour {
         pressure.Blit(clearMaterial);
         pressure.Swap();
 
-        // pressureProgram.bind();
-        // gl.uniform2f(pressureProgram.uniforms.texelSize, velocity.texelSizeX, velocity.texelSizeY);
-        // gl.uniform1i(pressureProgram.uniforms.uDivergence, divergence.attach(0));
-        // for (let i = 0; i < config.PRESSURE_ITERATIONS; i++) {
-        //     gl.uniform1i(pressureProgram.uniforms.uPressure, pressure.read.attach(1));
-        //     blit(pressure.write);
-        //     pressure.swap();
-        // }
+        pressureMaterial.SetVector("_TexelSize", velocity.GetTexelSize());
+        pressureMaterial.SetTexture("_DivergenceTex", divergence.GetTexture());
+        for (int i = 0; i < config.PRESSURE_ITERATIONS; i++) {
+            pressureMaterial.SetTexture("_PressureTex", pressure.GetTexture());
+            pressure.Blit(pressureMaterial);
+            pressure.Swap();
+        }
 
-        // gradienSubtractProgram.bind();
-        // gl.uniform2f(gradienSubtractProgram.uniforms.texelSize, velocity.texelSizeX, velocity.texelSizeY);
-        // gl.uniform1i(gradienSubtractProgram.uniforms.uPressure, pressure.read.attach(0));
-        // gl.uniform1i(gradienSubtractProgram.uniforms.uVelocity, velocity.read.attach(1));
-        // blit(velocity.write);
-        // velocity.swap();
+        gradientSubtractMaterial.SetVector("_TexelSize", velocity.GetTexelSize());
+        gradientSubtractMaterial.SetTexture("_PressureTex", pressure.GetTexture());
+        gradientSubtractMaterial.SetTexture("_VelocityTex", velocity.GetTexture());
+        velocity.Blit(gradientSubtractMaterial);
+        velocity.Swap();
 
-        // advectionProgram.bind();
-        // gl.uniform2f(advectionProgram.uniforms.texelSize, velocity.texelSizeX, velocity.texelSizeY);
+        advectionMaterial.SetVector("_TexelSize", velocity.GetTexelSize());
+        // TODO: Not sure if I want to check for linear filtering support
         // if (!ext.supportLinearFiltering)
-        //     gl.uniform2f(advectionProgram.uniforms.dyeTexelSize, velocity.texelSizeX, velocity.texelSizeY);
-        // let velocityId = velocity.read.attach(0);
-        // gl.uniform1i(advectionProgram.uniforms.uVelocity, velocityId);
-        // gl.uniform1i(advectionProgram.uniforms.uSource, velocityId);
-        // gl.uniform1f(advectionProgram.uniforms.dt, dt);
-        // gl.uniform1f(advectionProgram.uniforms.dissipation, config.VELOCITY_DISSIPATION);
-        // blit(velocity.write);
-        // velocity.swap();
+        advectionMaterial.SetVector("_DyeTexelSize", dye.GetTexelSize());        
+        advectionMaterial.SetTexture("_VelocityTex", velocity.GetTexture());
+        advectionMaterial.SetTexture("_SourceTex", velocity.GetTexture());
+        advectionMaterial.SetFloat("_DeltaTime", dt);
+        advectionMaterial.SetFloat("_Dissipation", config.VELOCITY_DISSIPATION);
+        velocity.Blit(advectionMaterial);
+        velocity.Swap();
 
+        // TODO: Not sure if I want to check for linear filtering support
         // if (!ext.supportLinearFiltering)
-        //     gl.uniform2f(advectionProgram.uniforms.dyeTexelSize, dye.texelSizeX, dye.texelSizeY);
-        // gl.uniform1i(advectionProgram.uniforms.uVelocity, velocity.read.attach(0));
-        // gl.uniform1i(advectionProgram.uniforms.uSource, dye.read.attach(1));
-        // gl.uniform1f(advectionProgram.uniforms.dissipation, config.DENSITY_DISSIPATION);
-        // blit(dye.write);
-        // dye.swap();
+        advectionMaterial.SetVector("_DyeTexelSize", dye.GetTexelSize());        
+        advectionMaterial.SetTexture("_VelocityTex", velocity.GetTexture());
+        advectionMaterial.SetTexture("_SourceTex", dye.GetTexture());
+        advectionMaterial.SetFloat("_Dissipation", config.DENSITY_DISSIPATION);
+        dye.Blit(advectionMaterial);
+        dye.Swap();
     }
 
     void Render() {
