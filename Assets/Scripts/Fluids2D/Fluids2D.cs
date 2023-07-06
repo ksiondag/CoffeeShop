@@ -16,9 +16,12 @@ public class Fluids2D : UdonSharpBehaviour {
 
     public float splat_force = 0.5f;
 
+    // Materials used for applying shaders (not sure how to apply shader without a material)
     public Material splatMaterial;
     public Material curlMaterial;
     public Material vorticityMaterial;
+    public Material divergenceMaterial;
+    public Material clearMaterial;
 
     void Start() {
         dye = GetComponent<Dye>();
@@ -27,12 +30,14 @@ public class Fluids2D : UdonSharpBehaviour {
         velocity = GetComponent<Velocity>();
         velocity.Initialize(512, 512, RenderTextureFormat.RGFloat);
 
-        // divergence = GetComponent<Divergence>();
+        divergence = GetComponent<Divergence>();
+        divergence.Initialize(512, 512, RenderTextureFormat.RFloat);
 
         curl = GetComponent<Curl>();
         curl.Initialize(512, 512, RenderTextureFormat.RFloat);
 
-        // pressure = GetComponent<Pressure>();
+        pressure = GetComponent<Pressure>();
+        pressure.Initialize(512, 512, RenderTextureFormat.RFloat);
 
         pourer = GetComponent<Pourer>();
         config = GetComponent<Config>();
@@ -41,6 +46,9 @@ public class Fluids2D : UdonSharpBehaviour {
     void Update() {
         float dt = Time.deltaTime;
         ApplyInputs();
+        if (!config.PAUSED) {
+            Step(dt);
+        }
     }
 
     private Vector2 ConvertToUV(Vector3 point) {
@@ -85,21 +93,19 @@ public class Fluids2D : UdonSharpBehaviour {
         vorticityMaterial.SetVector("_TexelSize", velocity.GetTexelSize());
         vorticityMaterial.SetTexture("_VelocityTex", velocity.GetTexture());
         vorticityMaterial.SetTexture("_CurlTex", curl.GetTexture());
-        // gl.uniform1f(vorticityProgram.uniforms.curl, config.CURL);
-        // gl.uniform1f(vorticityProgram.uniforms.dt, dt);
-        // blit(velocity.write);
-        // velocity.swap();
+        vorticityMaterial.SetInt("_Curl", config.CURL);
+        vorticityMaterial.SetFloat("_DeltaTime", dt);
+        velocity.Blit(vorticityMaterial);
+        velocity.Swap();
 
-        // divergenceProgram.bind();
-        // gl.uniform2f(divergenceProgram.uniforms.texelSize, velocity.texelSizeX, velocity.texelSizeY);
-        // gl.uniform1i(divergenceProgram.uniforms.uVelocity, velocity.read.attach(0));
-        // blit(divergence);
+        divergenceMaterial.SetVector("_TexelSize", velocity.GetTexelSize());
+        divergenceMaterial.SetTexture("_VelocityTex", velocity.GetTexture());
+        divergence.Blit(divergenceMaterial);
 
-        // clearProgram.bind();
-        // gl.uniform1i(clearProgram.uniforms.uTexture, pressure.read.attach(0));
-        // gl.uniform1f(clearProgram.uniforms.value, config.PRESSURE);
-        // blit(pressure.write);
-        // pressure.swap();
+        clearMaterial.SetTexture("_MainTex", pressure.GetTexture());
+        clearMaterial.SetFloat("_Value", config.PRESSURE);
+        pressure.Blit(clearMaterial);
+        pressure.Swap();
 
         // pressureProgram.bind();
         // gl.uniform2f(pressureProgram.uniforms.texelSize, velocity.texelSizeX, velocity.texelSizeY);
