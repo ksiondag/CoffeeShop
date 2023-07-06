@@ -44,6 +44,10 @@ public class DoubleFBO : UdonSharpBehaviour {
         }
     }
 
+    public Vector2 GetTexelSize() {
+        return new Vector2(texelSizeX, texelSizeY);
+    }
+
     public RenderTexture GetTexture() {
         return readTexture;
     }

@@ -31,4 +31,12 @@ public class FBO : UdonSharpBehaviour {
     public void Blit(Material shaderMaterial) {
         VRCGraphics.Blit(null, texture, shaderMaterial);
     }
+
+    public Vector2 GetTexelSize() {
+        return new Vector2(texelSizeX, texelSizeY);
+    }
+
+    public RenderTexture GetTexture() {
+        return texture;
+    }
 }
