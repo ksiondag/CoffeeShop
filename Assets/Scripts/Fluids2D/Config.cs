@@ -8,7 +8,7 @@ public class Config : UdonSharpBehaviour {
     public int SIM_RESOLUTION = 128;
     public int DYE_RESOLUTION = 512;
     public int CAPTURE_RESOLUTION = 512;
-    public int DENSITY_DISSIPATION = 1;
+    public float DENSITY_DISSIPATION = 1f;
     public float VELOCITY_DISSIPATION = 0.2f;
     public float PRESSURE = 0.8f;
     public int PRESSURE_ITERATIONS = 20;

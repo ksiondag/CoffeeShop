@@ -35,7 +35,7 @@ public class Pourer : UdonSharpBehaviour
         prevTexcoord = texcoord;
         texcoord = point;
         delta = texcoord - prevTexcoord;
-        moved = Mathf.Abs(delta.x) > 0 || Mathf.Abs(delta.y) > 0;
+        moved = Mathf.Abs(delta.x) > 0.01 || Mathf.Abs(delta.y) > 0.01;
     }
 
     public void Reset() {

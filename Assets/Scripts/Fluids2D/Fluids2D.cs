@@ -14,8 +14,6 @@ public class Fluids2D : UdonSharpBehaviour {
     private Pourer pourer;
     private Config config;
 
-    public float splat_force = 0.5f;
-
     // Materials used for applying shaders (not sure how to apply shader without a material)
     public Material splatMaterial;
     public Material curlMaterial;
@@ -150,7 +148,7 @@ public class Fluids2D : UdonSharpBehaviour {
     }
 
     void SplatPourer() {
-        Vector2 delta = pourer.delta * splat_force;
+        Vector2 delta = pourer.delta * config.SPLAT_FORCE;
         Splat(pourer.texcoord, delta, pourer.color);
     }
 
@@ -160,6 +158,7 @@ public class Fluids2D : UdonSharpBehaviour {
         splatMaterial.SetFloat("_AspectRatio", 1.0f);
         splatMaterial.SetVector("_Point", new Vector4(position.x, position.y, 0, 0));
         splatMaterial.SetVector("_Color", new Vector4(force.x, force.y, 0, 0));
+        Debug.Log("Splatting at " + position + " with force " + force);
         splatMaterial.SetFloat("_Radius", config.SPLAT_RADIUS);
         velocity.Blit(splatMaterial);
         velocity.Swap();

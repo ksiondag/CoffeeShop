@@ -40,8 +40,8 @@
             fixed4 frag (v2f i) : SV_Target {
                 float2 p = i.uv - _Point;
                 p.x *= _AspectRatio;
-                float3 splat = exp(-dot(p, p) / _Radius) * _Color.rgb;
-                float3 base = tex2D(_MainTex, i.uv).rgb;
+                float3 splat = exp(-dot(p, p) / _Radius) * _Color.xyz;
+                float3 base = tex2D(_MainTex, i.uv).xyz;
                 return fixed4(base + splat, 1.0);
             }
             ENDCG

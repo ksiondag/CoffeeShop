@@ -1788,7 +1788,6 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1121009091}
-  splat_force: 0.5
   splatMaterial: {fileID: 2100000, guid: ddd774a394331a244b3d5d311823c36a, type: 2}
   curlMaterial: {fileID: 2100000, guid: e34b6523d4e8f96418f4a4ea9ff8e7c6, type: 2}
   vorticityMaterial: {fileID: 2100000, guid: 711ca501b81a08040b119a7f9f5091ed, type: 2}
@@ -2146,9 +2145,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1121009105}
   SIM_RESOLUTION: 128
-  DYE_RESOLUTION: 512
+  DYE_RESOLUTION: 1024
   CAPTURE_RESOLUTION: 512
-  DENSITY_DISSIPATION: 1
+  DENSITY_DISSIPATION: 0.5
   VELOCITY_DISSIPATION: 0.2
   PRESSURE: 0.8
   PRESSURE_ITERATIONS: 20
