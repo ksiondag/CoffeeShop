@@ -66,9 +66,9 @@ Material:
     m_Floats:
     - _BumpScale: 1
     - _Cutoff: 0.5
-    - _DeltaTime: 0.0111129
+    - _DeltaTime: 0.0311196
     - _DetailNormalMapScale: 1
-    - _Dissipation: 0.5
+    - _Dissipation: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5

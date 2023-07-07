@@ -77,4 +77,4 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Point: {r: 0.4451847, g: 0.21024549, b: 0, a: 0}
+    - _Point: {r: 0.28854167, g: 0.5791139, b: 0, a: 0}
