@@ -38,7 +38,7 @@
             }
 
             fixed4 frag (v2f i) : SV_Target {
-                float2 p = i.uv - _Point;
+                float2 p = i.uv - _Point.xy;
                 p.x *= _AspectRatio;
                 float3 splat = exp(-dot(p, p) / _Radius) * _Color.xyz;
                 float3 base = tex2D(_MainTex, i.uv).xyz;

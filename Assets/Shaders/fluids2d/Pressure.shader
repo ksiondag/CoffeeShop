@@ -1,7 +1,7 @@
 ﻿Shader "Custom/Pressure" {
     Properties {
+        _MainTex ("Divergence Texture", 2D) = "white" {}
         _PressureTex ("Pressure Texture", 2D) = "white" {}
-        _DivergenceTex ("Divergence Texture", 2D) = "white" {}
         _TexelSize ("Texel Size", Vector) = (512, 512, 0, 0)
     }
     SubShader {
@@ -27,7 +27,7 @@
             };
 
             sampler2D _PressureTex;
-            sampler2D _DivergenceTex;
+            sampler2D _MainTex;
             float4 _TexelSize;
 
             v2f vert (appdata v) {
@@ -42,11 +42,11 @@
             }
 
             fixed4 frag (v2f i) : SV_Target {
-                float L = tex2D(_PressureTex, i.uvL).r;
-                float R = tex2D(_PressureTex, i.uvR).r;
-                float T = tex2D(_PressureTex, i.uvT).r;
-                float B = tex2D(_PressureTex, i.uvB).r;
-                float divergence = tex2D(_DivergenceTex, i.uv).r;
+                float L = tex2D(_PressureTex, i.uvL).x;
+                float R = tex2D(_PressureTex, i.uvR).x;
+                float T = tex2D(_PressureTex, i.uvT).x;
+                float B = tex2D(_PressureTex, i.uvB).x;
+                float divergence = tex2D(_MainTex, i.uv).x;
                 float pressure = (L + R + B + T - divergence) * 0.25;
                 return fixed4(pressure, 0.0, 0.0, 1.0);
             }

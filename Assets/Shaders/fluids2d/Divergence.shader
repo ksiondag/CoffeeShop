@@ -1,6 +1,6 @@
 ﻿Shader "Custom/Divergence" {
     Properties {
-        _VelocityTex ("Velocity Texture", 2D) = "white" {}
+        _MainTex ("Velocity Texture", 2D) = "white" {}
         _TexelSize ("Texel Size", Vector) = (512, 512, 0, 0)
     }
     SubShader {
@@ -25,7 +25,7 @@
                 float4 vertex : SV_POSITION;
             };
 
-            sampler2D _VelocityTex;
+            sampler2D _MainTex;
             float2 _TexelSize;
 
             v2f vert (appdata v) {
@@ -40,12 +40,12 @@
             }
 
             fixed4 frag (v2f i) : SV_Target {
-                float L = tex2D(_VelocityTex, i.l).x;
-                float R = tex2D(_VelocityTex, i.r).x;
-                float T = tex2D(_VelocityTex, i.t).y;
-                float B = tex2D(_VelocityTex, i.b).y;
+                float L = tex2D(_MainTex, i.l).x;
+                float R = tex2D(_MainTex, i.r).x;
+                float T = tex2D(_MainTex, i.t).y;
+                float B = tex2D(_MainTex, i.b).y;
 
-                float2 C = tex2D(_VelocityTex, i.uv).xy;
+                float2 C = tex2D(_MainTex, i.uv).xy;
                 if (i.l.x < 0.0) { L = -C.x; }
                 if (i.r.x > 1.0) { R = -C.x; }
                 if (i.t.y > 1.0) { T = -C.y; }

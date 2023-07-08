@@ -25,31 +25,34 @@ public class Fluids2D : UdonSharpBehaviour {
     public Material advectionMaterial;
 
     void Start() {
+        config = GetComponent<Config>();
+
         dye = GetComponent<Dye>();
-        dye.Initialize(512, 512, RenderTextureFormat.ARGB32);
+        dye.Initialize(config.DYE_RESOLUTION, config.DYE_RESOLUTION, RenderTextureFormat.ARGB32);
 
         velocity = GetComponent<Velocity>();
-        velocity.Initialize(512, 512, RenderTextureFormat.RGFloat);
+        velocity.Initialize(config.SIM_RESOLUTION, config.SIM_RESOLUTION, RenderTextureFormat.RGFloat);
 
         divergence = GetComponent<Divergence>();
-        divergence.Initialize(512, 512, RenderTextureFormat.RFloat);
+        divergence.Initialize(config.SIM_RESOLUTION, config.SIM_RESOLUTION, RenderTextureFormat.RFloat);
 
         curl = GetComponent<Curl>();
-        curl.Initialize(512, 512, RenderTextureFormat.RFloat);
+        curl.Initialize(config.SIM_RESOLUTION, config.SIM_RESOLUTION, RenderTextureFormat.RFloat);
 
         pressure = GetComponent<Pressure>();
-        pressure.Initialize(512, 512, RenderTextureFormat.RFloat);
+        pressure.Initialize(config.SIM_RESOLUTION, config.SIM_RESOLUTION, RenderTextureFormat.RFloat);
 
         pourer = GetComponent<Pourer>();
-        config = GetComponent<Config>();
     }
 
     void Update() {
         float dt = Time.deltaTime;
+        // dt = Mathf.Min(dt, 0.016666f);
         ApplyInputs();
         if (!config.PAUSED) {
             Step(dt);
         }
+        // TODO: Need to do the Render part for realz, because of the drawColor bit
     }
 
     private Vector2 ConvertToUV(Vector3 point) {
@@ -92,7 +95,7 @@ public class Fluids2D : UdonSharpBehaviour {
         curl.Blit(curlMaterial);
 
         vorticityMaterial.SetVector("_TexelSize", velocity.GetTexelSize());
-        vorticityMaterial.SetTexture("_VelocityTex", velocity.GetTexture());
+        vorticityMaterial.SetTexture("_MainTex", velocity.GetTexture());
         vorticityMaterial.SetTexture("_CurlTex", curl.GetTexture());
         vorticityMaterial.SetInt("_Curl", config.CURL);
         vorticityMaterial.SetFloat("_DeltaTime", dt);
@@ -100,7 +103,7 @@ public class Fluids2D : UdonSharpBehaviour {
         velocity.Swap();
 
         divergenceMaterial.SetVector("_TexelSize", velocity.GetTexelSize());
-        divergenceMaterial.SetTexture("_VelocityTex", velocity.GetTexture());
+        divergenceMaterial.SetTexture("_MainTex", velocity.GetTexture());
         divergence.Blit(divergenceMaterial);
 
         clearMaterial.SetTexture("_MainTex", pressure.GetTexture());
@@ -109,7 +112,7 @@ public class Fluids2D : UdonSharpBehaviour {
         pressure.Swap();
 
         pressureMaterial.SetVector("_TexelSize", velocity.GetTexelSize());
-        pressureMaterial.SetTexture("_DivergenceTex", divergence.GetTexture());
+        pressureMaterial.SetTexture("_MainTex", divergence.GetTexture());
         for (int i = 0; i < config.PRESSURE_ITERATIONS; i++) {
             pressureMaterial.SetTexture("_PressureTex", pressure.GetTexture());
             pressure.Blit(pressureMaterial);
@@ -117,7 +120,7 @@ public class Fluids2D : UdonSharpBehaviour {
         }
 
         gradientSubtractMaterial.SetVector("_TexelSize", velocity.GetTexelSize());
-        gradientSubtractMaterial.SetTexture("_PressureTex", pressure.GetTexture());
+        gradientSubtractMaterial.SetTexture("_MainTex", pressure.GetTexture());
         gradientSubtractMaterial.SetTexture("_VelocityTex", velocity.GetTexture());
         velocity.Blit(gradientSubtractMaterial);
         velocity.Swap();
@@ -125,9 +128,9 @@ public class Fluids2D : UdonSharpBehaviour {
         advectionMaterial.SetVector("_TexelSize", velocity.GetTexelSize());
         // TODO: Not sure if I want to check for linear filtering support
         // if (!ext.supportLinearFiltering)
-        advectionMaterial.SetVector("_DyeTexelSize", dye.GetTexelSize());        
+        // advectionMaterial.SetVector("_DyeTexelSize", dye.GetTexelSize());        
         advectionMaterial.SetTexture("_VelocityTex", velocity.GetTexture());
-        advectionMaterial.SetTexture("_SourceTex", velocity.GetTexture());
+        advectionMaterial.SetTexture("_MainTex", velocity.GetTexture());
         advectionMaterial.SetFloat("_DeltaTime", dt);
         advectionMaterial.SetFloat("_Dissipation", config.VELOCITY_DISSIPATION);
         velocity.Blit(advectionMaterial);
@@ -135,9 +138,9 @@ public class Fluids2D : UdonSharpBehaviour {
 
         // TODO: Not sure if I want to check for linear filtering support
         // if (!ext.supportLinearFiltering)
-        advectionMaterial.SetVector("_DyeTexelSize", dye.GetTexelSize());        
+        // advectionMaterial.SetVector("_DyeTexelSize", dye.GetTexelSize());        
         advectionMaterial.SetTexture("_VelocityTex", velocity.GetTexture());
-        advectionMaterial.SetTexture("_SourceTex", dye.GetTexture());
+        advectionMaterial.SetTexture("_MainTex", dye.GetTexture());
         advectionMaterial.SetFloat("_Dissipation", config.DENSITY_DISSIPATION);
         dye.Blit(advectionMaterial);
         dye.Swap();
@@ -147,7 +150,7 @@ public class Fluids2D : UdonSharpBehaviour {
 
     }
 
-    void SplatPourer() {
+    public void SplatPourer() {
         Vector2 delta = pourer.delta * config.SPLAT_FORCE;
         Splat(pourer.texcoord, delta, pourer.color);
     }
@@ -158,8 +161,7 @@ public class Fluids2D : UdonSharpBehaviour {
         splatMaterial.SetFloat("_AspectRatio", 1.0f);
         splatMaterial.SetVector("_Point", new Vector4(position.x, position.y, 0, 0));
         splatMaterial.SetVector("_Color", new Vector4(force.x, force.y, 0, 0));
-        Debug.Log("Splatting at " + position + " with force " + force);
-        splatMaterial.SetFloat("_Radius", config.SPLAT_RADIUS);
+        splatMaterial.SetFloat("_Radius", config.SPLAT_RADIUS / 100f);
         velocity.Blit(splatMaterial);
         velocity.Swap();
 

@@ -6,7 +6,7 @@ using VRC.Udon;
 
 public class Config : UdonSharpBehaviour {
     public int SIM_RESOLUTION = 128;
-    public int DYE_RESOLUTION = 512;
+    public int DYE_RESOLUTION = 1024;
     public int CAPTURE_RESOLUTION = 512;
     public float DENSITY_DISSIPATION = 1f;
     public float VELOCITY_DISSIPATION = 0.2f;

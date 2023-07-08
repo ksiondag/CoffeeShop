@@ -1,6 +1,6 @@
 ﻿Shader "Custom/Vorticity" {
     Properties {
-        _VelocityTex ("Velocity Texture", 2D) = "white" {}
+        _MainTex ("Velocity Texture", 2D) = "white" {}
         _CurlTex ("Curl Texture", 2D) = "white" {}
         _Curl ("Curl", Range(-10, 10)) = 0
         _DeltaTime ("Delta Time", Range(0, 1)) = 0
@@ -28,7 +28,7 @@
                 float4 vertex : SV_POSITION;
             };
 
-            sampler2D _VelocityTex;
+            sampler2D _MainTex;
             sampler2D _CurlTex;
             float _Curl;
             float _DeltaTime;
@@ -57,7 +57,7 @@
                 force *= _Curl * C;
                 force.y *= -1.0;
 
-                float2 velocity = tex2D(_VelocityTex, i.uv).xy;
+                float2 velocity = tex2D(_MainTex, i.uv).xy;
                 velocity += force * _DeltaTime;
                 velocity = clamp(velocity, -1000.0, 1000.0);
                 return float4(velocity, 0.0, 1.0);

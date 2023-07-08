@@ -1,6 +1,6 @@
 ﻿Shader "Custom/GradientSubtract" {
     Properties {
-        _PressureTex ("Pressure Texture", 2D) = "white" {}
+        _MainTex ("Pressure Texture", 2D) = "white" {}
         _VelocityTex ("Velocity Texture", 2D) = "white" {}
         _TexelSize ("Texel Size", Vector) = (512, 512, 0, 0)
     }
@@ -26,7 +26,7 @@
                 float4 vertex : SV_POSITION;
             };
 
-            sampler2D _PressureTex;
+            sampler2D _MainTex;
             sampler2D _VelocityTex;
             float4 _TexelSize;
 
@@ -42,11 +42,11 @@
             }
 
             fixed4 frag (v2f i) : SV_Target {
-                float L = tex2D(_PressureTex, i.uvL).r;
-                float R = tex2D(_PressureTex, i.uvR).r;
-                float T = tex2D(_PressureTex, i.uvT).r;
-                float B = tex2D(_PressureTex, i.uvB).r;
-                float2 velocity = tex2D(_VelocityTex, i.uv).rg;
+                float L = tex2D(_MainTex, i.uvL).x;
+                float R = tex2D(_MainTex, i.uvR).x;
+                float T = tex2D(_MainTex, i.uvT).x;
+                float B = tex2D(_MainTex, i.uvB).x;
+                float2 velocity = tex2D(_VelocityTex, i.uv).xy;
                 velocity -= float2(R - L, T - B);
                 return fixed4(velocity, 0.0, 1.0);
             }
