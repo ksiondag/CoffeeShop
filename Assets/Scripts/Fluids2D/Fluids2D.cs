@@ -52,6 +52,7 @@ public class Fluids2D : UdonSharpBehaviour {
         if (!config.PAUSED) {
             Step(dt);
         }
+
         // TODO: Need to do the Render part for realz, because of the drawColor bit
     }
 

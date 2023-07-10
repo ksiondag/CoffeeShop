@@ -2,7 +2,7 @@
     Properties {
         _MainTex ("Texture", 2D) = "white" {}
         _AspectRatio ("AspectRatio", Float) = 1.0
-        _Color ("Color", Color) = (1,1,1,1)
+        _Color ("Color", Float) = (1,1,1,1)
         _Point ("Point", Vector) = (0,0,0,0)
         _Radius ("Radius", Float) = 1.0
     }
