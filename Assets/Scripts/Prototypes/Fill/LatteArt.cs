@@ -68,8 +68,8 @@ public class LatteArt : UdonSharpBehaviour
             worldMax = Vector3.Max(worldMax, worldVertex);
         }
 
-        Debug.Log("World Min: " + worldMin);
-        Debug.Log("World Max: " + worldMax);
+        // Debug.Log("World Min: " + worldMin);
+        // Debug.Log("World Max: " + worldMax);
         
         fillMaterial.SetVector("_WorldMin", worldMin);
         fillMaterial.SetVector("_WorldMax", worldMax);
