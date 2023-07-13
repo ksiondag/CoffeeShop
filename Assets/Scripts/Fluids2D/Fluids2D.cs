@@ -153,10 +153,16 @@ public class Fluids2D : UdonSharpBehaviour {
 
     public void SplatPourer() {
         Vector2 delta = pourer.delta * config.SPLAT_FORCE;
-        Splat(pourer.texcoord, delta, pourer.color);
+        Splat_private(pourer.texcoord, delta, pourer.color);
     }
 
-    void Splat(Vector2 position, Vector2 force, Color color) {
+    public void Splat(Vector3 position, Vector3 force, Color color) {
+        Vector2 uvPosition = ConvertToUV(position);
+        Vector2 uvForce = ConvertToUV(force);
+        Splat_private(uvPosition, uvForce, color);
+    }
+
+    private void Splat_private(Vector2 position, Vector2 force, Color color) {
         splatMaterial.SetTexture("_MainTex", velocity.GetTexture());
         // TODO: I don't think aspect ratio should ever be non-1, but maybe handle it anyways?
         splatMaterial.SetFloat("_AspectRatio", 1.0f);
@@ -168,6 +174,7 @@ public class Fluids2D : UdonSharpBehaviour {
 
         splatMaterial.SetTexture("_MainTex", dye.GetTexture());
         splatMaterial.SetVector("_Color", new Vector4(color.r, color.g, color.b, 0));
+        splatMaterial.SetFloat("_Radius", config.SPLAT_RADIUS / 10000f);
         dye.Blit(splatMaterial);
         dye.Swap();
     }

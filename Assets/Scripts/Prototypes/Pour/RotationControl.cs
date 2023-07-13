@@ -21,7 +21,7 @@ public class RotationControl : UdonSharpBehaviour {
     private MeshFilter meshFilter;
 
     private Vector3 getSpoutPoint() {
-        return spoutPoint.transform.TransformPoint(spoutPoint.GetComponent<MeshFilter>().mesh.vertices[0]);
+        return spoutPoint.transform.position;
     }
 
     void Start() {
