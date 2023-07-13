@@ -4,7 +4,7 @@ using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 
-public class Basic : UdonSharpBehaviour {
+public class RotationControl : UdonSharpBehaviour {
     public float position = 0.0f;
     public float height = 0.0f;
     private Vector3 startPosition;
@@ -67,6 +67,6 @@ public class Basic : UdonSharpBehaviour {
         transform.position = startPosition + new Vector3(deltaX, 0, 0);
         float minAboveTarget = CurrentHeight();
         transform.position = startPosition + new Vector3(deltaX, startMinHeight - minAboveTarget + height, 0);
-        Debug.Log(1000*(getSpoutPoint() - startSpoutPosition));
+        // Debug.Log(1000*(getSpoutPoint() - startSpoutPosition));
     }
 }
