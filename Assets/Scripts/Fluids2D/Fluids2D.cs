@@ -4,7 +4,8 @@ using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 
-public class Fluids2D : UdonSharpBehaviour {
+public class Fluids2D : UdonSharpBehaviour
+{
     private Dye dye;
     private Velocity velocity;
     private Divergence divergence;
@@ -24,7 +25,8 @@ public class Fluids2D : UdonSharpBehaviour {
     public Material gradientSubtractMaterial;
     public Material advectionMaterial;
 
-    void Start() {
+    void Start()
+    {
         config = GetComponent<Config>();
 
         dye = GetComponent<Dye>();
@@ -45,18 +47,21 @@ public class Fluids2D : UdonSharpBehaviour {
         pourer = GetComponent<Pourer>();
     }
 
-    void Update() {
+    void Update()
+    {
         float dt = Time.deltaTime;
         // dt = Mathf.Min(dt, 0.016666f);
         ApplyInputs();
-        if (!config.PAUSED) {
+        if (!config.PAUSED)
+        {
             Step(dt);
         }
 
         // TODO: Need to do the Render part for realz, because of the drawColor bit
     }
 
-    private Vector2 ConvertToUV(Vector3 point) {
+    private Vector2 ConvertToUV(Vector3 point)
+    {
         Vector3 localPoint = this.gameObject.transform.InverseTransformPoint(point);
 
         // Convert local coordinates to UV coordinates
@@ -66,31 +71,37 @@ public class Fluids2D : UdonSharpBehaviour {
         return uvPoint;
     }
 
-    private void OnCollisionEnter(Collision collision) {
+    private void OnCollisionEnter(Collision collision)
+    {
         Vector3 point = collision.GetContact(0).point;
         Vector2 uvPoint = ConvertToUV(point);
         pourer.Initialize(uvPoint);
     }
 
-    private void OnCollisionStay(Collision collision) {
+    private void OnCollisionStay(Collision collision)
+    {
         Vector3 point = collision.GetContact(0).point;
         Vector2 uvPoint = ConvertToUV(point);
         pourer.Move(uvPoint);
     }
 
-    private void OnCollisionExit(Collision collision) {
+    private void OnCollisionExit(Collision collision)
+    {
         pourer.Reset();
     }
 
-    
-    void ApplyInputs() {
-        if (pourer.moved) {
+
+    void ApplyInputs()
+    {
+        if (pourer.moved)
+        {
             pourer.moved = false;
             SplatPourer();
         }
     }
 
-    void Step(float dt) {
+    void Step(float dt)
+    {
         curlMaterial.SetVector("_TexelSize", velocity.GetTexelSize());
         curlMaterial.SetTexture("_MainTex", velocity.GetTexture());
         curl.Blit(curlMaterial);
@@ -114,7 +125,8 @@ public class Fluids2D : UdonSharpBehaviour {
 
         pressureMaterial.SetVector("_TexelSize", velocity.GetTexelSize());
         pressureMaterial.SetTexture("_MainTex", divergence.GetTexture());
-        for (int i = 0; i < config.PRESSURE_ITERATIONS; i++) {
+        for (int i = 0; i < config.PRESSURE_ITERATIONS; i++)
+        {
             pressureMaterial.SetTexture("_PressureTex", pressure.GetTexture());
             pressure.Blit(pressureMaterial);
             pressure.Swap();
@@ -147,34 +159,42 @@ public class Fluids2D : UdonSharpBehaviour {
         dye.Swap();
     }
 
-    void Render() {
+    void Render()
+    {
 
     }
 
-    public void SplatPourer() {
+    public void SplatPourer()
+    {
         Vector2 delta = pourer.delta * config.SPLAT_FORCE;
         Splat_private(pourer.texcoord, delta, pourer.color);
     }
 
-    public void Splat(Vector3 position, Vector3 force, Color color) {
+    public void Splat(Vector3 position, Vector3 force, Color color)
+    {
         Vector2 uvPosition = ConvertToUV(position);
         Vector2 uvForce = ConvertToUV(force);
         Splat_private(uvPosition, uvForce, color);
     }
 
-    private void Splat_private(Vector2 position, Vector2 force, Color color) {
+    private void Splat_private(Vector2 position, Vector2 force, Color color)
+    {
+        Vector2 forceDirection = force.normalized;
+        float radius = config.SPLAT_RADIUS / 100f;
+        Vector2 splatPosition = position + forceDirection * config.SPLAT_RADIUS;
         splatMaterial.SetTexture("_MainTex", velocity.GetTexture());
         // TODO: I don't think aspect ratio should ever be non-1, but maybe handle it anyways?
         splatMaterial.SetFloat("_AspectRatio", 1.0f);
         splatMaterial.SetVector("_Point", new Vector4(position.x, position.y, 0, 0));
         splatMaterial.SetVector("_Color", new Vector4(force.x, force.y, 0, 0));
-        splatMaterial.SetFloat("_Radius", config.SPLAT_RADIUS / 100f);
+        splatMaterial.SetFloat("_Radius", radius);
         velocity.Blit(splatMaterial);
         velocity.Swap();
 
         splatMaterial.SetTexture("_MainTex", dye.GetTexture());
+        // splatMaterial.SetVector("_Point", new Vector4(splatPosition.x, splatPosition.y, 0, 0));
         splatMaterial.SetVector("_Color", new Vector4(color.r, color.g, color.b, 0));
-        splatMaterial.SetFloat("_Radius", config.SPLAT_RADIUS / 10000f);
+        splatMaterial.SetFloat("_Radius", radius / 10f);
         dye.Blit(splatMaterial);
         dye.Swap();
     }

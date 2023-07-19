@@ -2055,12 +2055,12 @@ MonoBehaviour:
   SIM_RESOLUTION: 128
   DYE_RESOLUTION: 1024
   CAPTURE_RESOLUTION: 512
-  DENSITY_DISSIPATION: 1
+  DENSITY_DISSIPATION: 0
   VELOCITY_DISSIPATION: 2
   PRESSURE: 0.8
   PRESSURE_ITERATIONS: 20
   CURL: 1
-  SPLAT_RADIUS: 0.25
+  SPLAT_RADIUS: 0.15
   SPLAT_FORCE: 6000
   SHADING: 0
   COLORFUL: 0
@@ -4394,7 +4394,7 @@ PrefabInstance:
     - target: {fileID: 1255100939186395759, guid: 198042854d1466d43b759419d4bfbf4b,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.594
+      value: 1.5778
       objectReference: {fileID: 0}
     - target: {fileID: 1255100939186395759, guid: 198042854d1466d43b759419d4bfbf4b,
         type: 3}
