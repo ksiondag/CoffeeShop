@@ -67,7 +67,7 @@ Material:
     - _BumpScale: 1
     - _Curl: 1
     - _Cutoff: 0.5
-    - _DeltaTime: 0.0114566
+    - _DeltaTime: 0.0208981
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
